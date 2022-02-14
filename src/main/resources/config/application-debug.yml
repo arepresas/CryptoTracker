@@ -1,0 +1,17 @@
+logging:
+  level:
+    root: WARN
+    org.postgresql.Driver: INFO
+    org.hibernate:
+      type:
+        descriptor:
+          sql:
+            BasicFinder: TRACE
+      SQL: DEBUG
+      stat: INFO
+    liquibase: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
+    # Log restTemplate
+    org.springframework.web.client.RestTemplate: DEBUG
+    # Log Oauth2
+    org.springframework.security.oauth2.client: DEBUG

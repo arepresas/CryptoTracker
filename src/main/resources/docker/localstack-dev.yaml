@@ -1,0 +1,19 @@
+version: '3.2'
+
+services:
+
+  cryptotracker-db:
+    container_name: cryptotracker-db
+    image: postgres:14.2-alpine3.15
+    environment:
+      POSTGRES_DB: cryptotracker-db
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - 5432:5432
+    volumes:
+      - cryptotracker-db_data:/var/lib/postgresql/data
+      - ./dump/:/docker-entrypoint-initdb.d/
+
+volumes:
+  cryptotracker-db_data:
