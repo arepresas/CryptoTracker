@@ -1,0 +1,33 @@
+logging:
+  level:
+    root: info
+    org:
+      springframework: INFO
+      postgresql.Driver: INFO
+      hibernate.SQL: INFO
+
+spring:
+  datasource:
+    hikari:
+      maximumPoolSize: 10
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    default-property-inclusion: non_empty
+  jpa:
+    open-in-view: true
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      temp:
+        use_jdbc_metadata_defaults: false
+    hibernate:
+      connection:
+        provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+      show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog-master.yml
