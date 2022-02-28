@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.ArrayList;
 
 @Data
-public class CoinMarketPriceApiResponse extends CoinMarketApiResponse {
+public class CoinMarketLastListingApiResponse extends CoinMarketApiResponse {
   private CoinMarketApiStatus status;
   private ArrayList<CoinMarketCryptoPrice> data;
 }

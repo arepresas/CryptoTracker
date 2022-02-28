@@ -6,12 +6,12 @@ import java.util.Date;
 
 @Data
 public class CoinMarketCryptoData {
-  private int id;
-  private int rank;
+  private Long id;
+  private Long rank;
   private String name;
   private String symbol;
   private String slug;
-  private int is_active;
+  private Long is_active;
   private Date first_historical_data;
   private Date last_historical_data;
   private CoinMarketCryptoPlatform platform;

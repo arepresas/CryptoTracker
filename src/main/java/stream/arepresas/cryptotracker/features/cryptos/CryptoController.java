@@ -11,8 +11,8 @@ import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketApiRespo
 import java.util.List;
 
 @RestController
-@Tag(name = "Crypto")
-@RequestMapping(value = "/v1/crypto")
+@Tag(name = "Coin Market API")
+@RequestMapping(value = CryptoApiEndpoints.CRYPTO_BASE_URL)
 public class CryptoController {
   private final CoinMarketClient coinMarketClient;
 
@@ -23,18 +23,29 @@ public class CryptoController {
   @Operation(description = "Get crypto(s) info")
   @GetMapping(value = CryptoApiEndpoints.CRYPTO_INFO)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<CoinMarketApiResponse> getCrypto(@PathVariable List<Long> cryptoIds) {
+  public ResponseEntity<CoinMarketApiResponse> getCryptoInfo(@PathVariable List<Long> cryptoIds) {
     return ResponseEntity.status(HttpStatus.OK)
         .header("X-Cache-Control", "max-age=60")
         .body(coinMarketClient.getCryptoInfo(cryptoIds));
   }
 
-  @Operation(description = "Get crypto(s) price(s)")
-  @GetMapping(value = CryptoApiEndpoints.CRYPTO_LAST_PRICES)
+  @Operation(description = "Get crypto(s) last listing(s)")
+  @GetMapping(value = CryptoApiEndpoints.CRYPTO_LAST_LISTINGS)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<CoinMarketApiResponse> getCryptoLastPrices() {
+  public ResponseEntity<CoinMarketApiResponse> getCryptoLastListing(
+      Integer start, Integer limit, Currency currency) {
     return ResponseEntity.status(HttpStatus.OK)
         .header("X-Cache-Control", "max-age=60")
-        .body(coinMarketClient.getCryptoLastPrices());
+        .body(coinMarketClient.getCryptoLastPrices(start, limit, currency));
+  }
+
+  @Operation(description = "Get crypto(s) quote(s)")
+  @GetMapping(value = CryptoApiEndpoints.CRYPTO_QUOTE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<CoinMarketApiResponse> getCryptoQuote(
+      @PathVariable List<Long> cryptoIds, @PathVariable Currency currency) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .header("X-Cache-Control", "max-age=60")
+        .body(coinMarketClient.getCryptoPrices(cryptoIds, currency));
   }
 }

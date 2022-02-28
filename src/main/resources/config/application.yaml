@@ -39,4 +39,7 @@ springdoc:
 coinMarket:
   api:
     url: https://pro-api.coinmarketcap.com
-#    key: IN_SECRETS
+    # key: IN_SECRETS
+  saved-cryptos:
+    start: 1
+    end: 200

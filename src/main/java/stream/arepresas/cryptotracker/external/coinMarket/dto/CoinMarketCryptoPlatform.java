@@ -1,12 +1,15 @@
 package stream.arepresas.cryptotracker.external.coinMarket.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class CoinMarketCryptoPlatform {
-  private int id;
+  private Long id;
   private String name;
   private String symbol;
   private String slug;
-  private String token_address;
+
+  @JsonProperty("token_address")
+  private String tokenAddress;
 }

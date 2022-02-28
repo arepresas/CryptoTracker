@@ -1,5 +1,6 @@
 package stream.arepresas.cryptotracker.external.coinMarket;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -8,14 +9,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import stream.arepresas.cryptotracker.external.ExternalUtils;
 import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketApiResponse;
 import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketInfoApiResponse;
-import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketPriceApiResponse;
+import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketLastListingApiResponse;
+import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketLastQuoteApiResponse;
+import stream.arepresas.cryptotracker.features.cryptos.Currency;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static stream.arepresas.cryptotracker.utils.ExternalUtils.getResponse;
 
 @Service
 @Slf4j
@@ -42,7 +46,7 @@ public class CoinMarketClient {
     Map<String, ?> params =
         Map.of("id", cryptoIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
 
-    return ExternalUtils.getResponse(
+    return getResponse(
         coinMarketRestTemplate.exchange(
             urlTemplate,
             HttpMethod.GET,
@@ -51,7 +55,8 @@ public class CoinMarketClient {
             params));
   }
 
-  public CoinMarketApiResponse getCryptoLastPrices() {
+  public CoinMarketApiResponse getCryptoLastPrices(
+      Integer start, Integer limit, Currency currency) {
     String url = mainUrl.concat("/v1/cryptocurrency/listings/latest");
 
     String urlTemplate =
@@ -62,14 +67,41 @@ public class CoinMarketClient {
             .encode()
             .toUriString();
 
-    Map<String, ?> params = Map.of("start", 1, "limit", 5, "convert", "USD");
+    Map<String, ?> params = Map.of("start", start, "limit", limit, "convert", currency);
 
-    return ExternalUtils.getResponse(
+    return getResponse(
         coinMarketRestTemplate.exchange(
             urlTemplate,
             HttpMethod.GET,
             createHttpEntity(),
-            CoinMarketPriceApiResponse.class,
+            CoinMarketLastListingApiResponse.class,
+            params));
+  }
+
+  public CoinMarketApiResponse getCryptoPrices(
+      @NonNull List<Long> cryptoIds, @NonNull Currency currency) {
+    String url = mainUrl.concat("/v2/cryptocurrency/quotes/latest");
+
+    String urlTemplate =
+        UriComponentsBuilder.fromHttpUrl(url)
+            .queryParam("id", "{id}")
+            .queryParam("convert", "{convert}")
+            .encode()
+            .toUriString();
+
+    Map<String, ?> params =
+        Map.of(
+            "id",
+            cryptoIds.stream().map(String::valueOf).collect(Collectors.joining(",")),
+            "convert",
+            currency);
+
+    return getResponse(
+        coinMarketRestTemplate.exchange(
+            urlTemplate,
+            HttpMethod.GET,
+            createHttpEntity(),
+            CoinMarketLastQuoteApiResponse.class,
             params));
   }
 
