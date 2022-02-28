@@ -31,3 +31,12 @@ spring:
       show-sql: true
   liquibase:
     change-log: classpath:db/changelog-master.yml
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+coinMarket:
+  api:
+    url: https://pro-api.coinmarketcap.com
+#    key: IN_SECRETS

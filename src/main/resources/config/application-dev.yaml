@@ -1,5 +1,7 @@
 logging:
   config: classpath:logback-spring-local.xml
+  level:
+    org.springframework.web.client.RestTemplate: DEBUG
 
 spring:
   datasource:
