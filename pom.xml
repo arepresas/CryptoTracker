@@ -19,6 +19,8 @@
         <querydsl.version>5.0.0</querydsl.version>
         <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
         <jackson-core.version>2.13.1</jackson-core.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     </properties>
     <dependencies>
         <!--	Dev-->
@@ -140,5 +142,54 @@
             </plugin>
         </plugins>
     </build>
-
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>arepresas</name>
+            <url>https://maven.pkg.github.com/arepresas/CryptoTracker</url>
+        </repository>
+    </distributionManagement>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.sources>.</sonar.sources>
+                <sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
+                <sonar.projectKey>CryptoTracker</sonar.projectKey>
+                <sonar.organization>arepresas</sonar.organization>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>${sonar-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>${maven-release-plugin.version}</version>
+                        <configuration>
+                            <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
