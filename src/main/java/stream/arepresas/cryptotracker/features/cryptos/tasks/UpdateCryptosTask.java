@@ -5,11 +5,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import stream.arepresas.cryptotracker.external.coinMarket.CoinMarketClient;
-import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketCryptoPrice;
-import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketInfoApiResponse;
-import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketLastListingApiResponse;
-import stream.arepresas.cryptotracker.external.coinMarket.dto.CoinMarketLastQuoteApiResponse;
+import stream.arepresas.cryptotracker.external.coinmarket.CoinMarketClient;
+import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketCryptoPrice;
+import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketInfoApiResponse;
+import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastListingApiResponse;
+import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastQuoteApiResponse;
 import stream.arepresas.cryptotracker.features.cryptos.CryptoCoin;
 import stream.arepresas.cryptotracker.features.cryptos.CryptoCoinService;
 import stream.arepresas.cryptotracker.features.cryptos.Currency;
@@ -17,7 +17,6 @@ import stream.arepresas.cryptotracker.utils.CoinMarketUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static stream.arepresas.cryptotracker.utils.CoinMarketUtils.cryptoCoinPriceFromCoinMarketCryptoPrice;
 import static stream.arepresas.cryptotracker.utils.DataUtils.isNullOrEmptyList;
@@ -54,23 +53,17 @@ public class UpdateCryptosTask implements Runnable {
 
           // Saved CryptoCoins
           List<CryptoCoin> cryptoCoins =
-              cryptoCoinService
-                  .getCryptoInfo(
-                      lastPrices.stream()
-                          .map(CoinMarketCryptoPrice::getId)
-                          .collect(Collectors.toList()))
-                  .stream()
-                  .collect(Collectors.toList());
+              cryptoCoinService.getCryptoInfo(
+                  lastPrices.stream().map(CoinMarketCryptoPrice::getId).toList());
 
-          List<Long> savedCryptoIds =
-              cryptoCoins.stream().map(CryptoCoin::getId).collect(Collectors.toList());
+          List<Long> savedCryptoIds = cryptoCoins.stream().map(CryptoCoin::getId).toList();
 
           // Add notSavedCryptoCoins
           List<Long> notSavedCryptoIds =
               lastPrices.stream()
                   .filter(lastPrice -> !savedCryptoIds.contains(lastPrice.getId()))
-                  .map(lastPrice -> lastPrice.getId())
-                  .collect(Collectors.toList());
+                  .map(CoinMarketCryptoPrice::getId)
+                  .toList();
 
           cryptoCoins.addAll(
               isNullOrEmptyList(notSavedCryptoIds)
@@ -78,7 +71,7 @@ public class UpdateCryptosTask implements Runnable {
                   : ((CoinMarketInfoApiResponse) coinMarketClient.getCryptoInfo(notSavedCryptoIds))
                       .getData().values().stream()
                           .map(CoinMarketUtils::cryptoCoinFromCoinMarketCryptoInfo)
-                          .collect(Collectors.toList()));
+                          .toList());
 
           // Price for Cryptos not in LastPrices
           List<Long> noPriceCryptoIds =
@@ -87,16 +80,16 @@ public class UpdateCryptosTask implements Runnable {
                       savedCryptoId ->
                           !lastPrices.stream()
                               .map(CoinMarketCryptoPrice::getId)
-                              .collect(Collectors.toList())
+                              .toList()
                               .contains(savedCryptoId))
-                  .collect(Collectors.toList());
+                  .toList();
 
           List<CoinMarketCryptoPrice> coinMarketCryptoPrices =
               isNullOrEmptyList(noPriceCryptoIds)
                   ? new ArrayList<>()
                   : ((CoinMarketLastQuoteApiResponse)
                           coinMarketClient.getCryptoPrices(noPriceCryptoIds, Currency.USD))
-                      .getData().values().stream().collect(Collectors.toList());
+                      .getData().values().stream().toList();
 
           // Add Cryptos in LastPrices
           coinMarketCryptoPrices.addAll(lastPrices);

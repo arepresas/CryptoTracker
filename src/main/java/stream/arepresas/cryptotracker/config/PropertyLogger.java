@@ -1,7 +1,6 @@
 package stream.arepresas.cryptotracker.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -14,26 +13,25 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Component
 @Profile("dev")
 public class PropertyLogger {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PropertyLogger.class);
-
   @EventListener
   public void handleContextRefresh(ContextRefreshedEvent event) {
     Environment env = event.getApplicationContext().getEnvironment();
-    LOGGER.info("====== Environment and configuration ======");
-    LOGGER.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
+    log.info("====== Environment and configuration ======");
+    log.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
     MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
     StreamSupport.stream(sources.spliterator(), false)
-        .filter(ps -> ps instanceof EnumerablePropertySource)
+        .filter(EnumerablePropertySource.class::isInstance)
         .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
         .flatMap(Arrays::stream)
         .distinct()
         .filter(prop -> !(prop.contains("credentials") || prop.contains("password")))
         .sorted()
-        .forEach(prop -> LOGGER.info("{}: {}", prop, env.getProperty(prop)));
-    LOGGER.info("===========================================");
+        .forEach(prop -> log.info("{}: {}", prop, env.getProperty(prop)));
+    log.info("===========================================");
   }
 }

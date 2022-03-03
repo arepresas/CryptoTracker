@@ -24,18 +24,18 @@ public class CryptoCoinPriceQuote {
 
   @NotNull private Currency currency;
   @NotNull private Double price;
-  @NotNull private Double volume_24h;
-  @NotNull private Double volume_change_24h;
-  @NotNull private Double percent_change_1h;
-  @NotNull private Double percent_change_24h;
-  @NotNull private Double percent_change_7d;
-  @NotNull private Double percent_change_30d;
-  @NotNull private Double percent_change_60d;
-  @NotNull private Double percent_change_90d;
-  @NotNull private Double market_cap;
-  @NotNull private Double market_cap_dominance;
-  @NotNull private Double fully_diluted_market_cap;
-  @NotNull private Date last_updated;
+  @NotNull private Double volume24h;
+  @NotNull private Double volumeChange24h;
+  @NotNull private Double percentChange1h;
+  @NotNull private Double percentChange24h;
+  @NotNull private Double percentChange7d;
+  @NotNull private Double percentChange30d;
+  @NotNull private Double percentChange60d;
+  @NotNull private Double percentChange90d;
+  @NotNull private Double marketCap;
+  @NotNull private Double marketCapDominance;
+  @NotNull private Double fullyDilutedMarketCap;
+  @NotNull private Date lastUpdated;
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)

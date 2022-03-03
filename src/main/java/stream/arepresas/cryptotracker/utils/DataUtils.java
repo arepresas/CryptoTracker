@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class DataUtils {
   public static String stringListToString(List<String> list) {
     return isNullOrEmptyList(list)
-        ? null
+        ? ""
         : list.stream().map(String::valueOf).collect(Collectors.joining(","));
   }
 

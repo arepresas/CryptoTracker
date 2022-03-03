@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static stream.arepresas.cryptotracker.utils.DataUtils.stringListToString;
 
@@ -40,9 +39,7 @@ public class CryptoCoinService {
           "Saved {} cryptoCoins with Ids {}",
           savedCryptoCoins.size(),
           stringListToString(
-              savedCryptoCoins.stream()
-                  .map(cryptoCoin -> cryptoCoin.getId().toString())
-                  .collect(Collectors.toList())));
+              savedCryptoCoins.stream().map(cryptoCoin -> cryptoCoin.getId().toString()).toList()));
     }
 
     return savedCryptoCoins;
@@ -67,7 +64,7 @@ public class CryptoCoinService {
           stringListToString(
               savedCryptoCoinPrices.stream()
                   .map(cryptoCoin -> cryptoCoin.getCoinInfo().getId().toString())
-                  .collect(Collectors.toList())));
+                  .toList()));
     }
 
     return savedCryptoCoinPrices;
