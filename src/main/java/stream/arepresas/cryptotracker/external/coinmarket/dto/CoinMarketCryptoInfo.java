@@ -1,4 +1,4 @@
-package stream.arepresas.cryptotracker.external.coinMarket.dto;
+package stream.arepresas.cryptotracker.external.coinmarket.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -26,9 +26,14 @@ public class CoinMarketCryptoInfo {
   @JsonProperty("tag-groups")
   private ArrayList<String> tagGroups;
 
-  private Date date_added;
-  private String twitter_username;
-  private int is_hidden;
+  @JsonProperty("date_added")
+  private Date dateAdded;
+
+  @JsonProperty("twitter_username")
+  private String twitterUsername;
+
+  @JsonProperty("is_hidden")
+  private int isHidden;
 
   private Map<String, List<String>> urls;
 }

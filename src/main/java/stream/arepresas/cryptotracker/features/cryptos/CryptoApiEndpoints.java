@@ -1,5 +1,8 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public final class CryptoApiEndpoints {
 
   public static final String CRYPTO_TASK_BASE_URL = "/v1/cryptoTask";

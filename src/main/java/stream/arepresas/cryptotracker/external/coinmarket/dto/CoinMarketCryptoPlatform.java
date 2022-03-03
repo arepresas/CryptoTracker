@@ -1,4 +1,4 @@
-package stream.arepresas.cryptotracker.external.coinMarket.dto;
+package stream.arepresas.cryptotracker.external.coinmarket.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

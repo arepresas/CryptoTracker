@@ -22,13 +22,13 @@ public class CryptoCoinPrice {
   @Column(name = "id", nullable = false)
   private Long id;
 
-  private Long cmc_rank;
-  private Long num_market_pairs;
-  private Double circulating_supply;
-  private Double total_supply;
-  private Double max_supply;
-  private Date last_updated;
-  private Date date_added;
+  private Long cmcRank;
+  private Long numMarketPairs;
+  private Double circulatingSupply;
+  private Double totalSupply;
+  private Double maxSupply;
+  private Date lastUpdated;
+  private Date dateAdded;
   private Long platformId;
 
   @JsonIgnore
