@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import stream.arepresas.cryptotracker.external.coinmarket.CoinMarketClient;
 import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketCryptoPrice;
@@ -38,6 +39,7 @@ public class UpdateCryptosTask implements Runnable {
 
   @SneakyThrows
   @Override
+  @Scheduled(fixedRate = 300000)
   public synchronized void run() {
     if (!running) {
       running = true;
