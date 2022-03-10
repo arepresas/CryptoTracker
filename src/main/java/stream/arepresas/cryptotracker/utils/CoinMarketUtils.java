@@ -34,12 +34,12 @@ public class CoinMarketUtils {
         .tags(stringListToString(coinMarketCryptoInfo.getTags()))
         .tagNames(stringListToString(coinMarketCryptoInfo.getTagNames()))
         .tagGroups(stringListToString(coinMarketCryptoInfo.getTagGroups()))
-        .coinPrice(new ArrayList<>())
+        .coinPrice(null)
         .build();
   }
 
   public static CryptoCoinPrice cryptoCoinPriceFromCoinMarketCryptoPrice(
-      @NotNull CoinMarketCryptoPrice coinMarketCryptoPrice, @NotNull CryptoCoin cryptoCoin) {
+          @NotNull CoinMarketCryptoPrice coinMarketCryptoPrice, @NotNull CryptoCoin cryptoCoin) {
     CryptoCoinPrice cryptoCoinPrice =
         CryptoCoinPrice.builder()
             .cmcRank(coinMarketCryptoPrice.getCmcRank())
@@ -47,7 +47,6 @@ public class CoinMarketUtils {
             .circulatingSupply(coinMarketCryptoPrice.getCirculatingSupply())
             .totalSupply(coinMarketCryptoPrice.getTotalSupply())
             .maxSupply(coinMarketCryptoPrice.getMaxSupply())
-            .lastUpdated(coinMarketCryptoPrice.getLastUpdated())
             .dateAdded(coinMarketCryptoPrice.getDateAdded())
             .platformId(
                 Objects.isNull(coinMarketCryptoPrice.getPlatform())
@@ -56,6 +55,7 @@ public class CoinMarketUtils {
             .coinPriceQuotes(new ArrayList<>())
             .coinInfo(cryptoCoin)
             .build();
+
     cryptoCoinPrice
         .getCoinPriceQuotes()
         .addAll(

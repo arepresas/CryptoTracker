@@ -1,22 +1,20 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crypto_coin")
-public class CryptoCoin {
+public class CryptoCoin implements Serializable {
   @Id
   @Column(name = "id", nullable = false)
   private Long id; // CoinMarketId
@@ -35,10 +33,10 @@ public class CryptoCoin {
   private String tokenAddress;
 
   @JsonIgnore
-  @OneToMany(
+  @OneToOne(
       mappedBy = "coinInfo",
       cascade = CascadeType.ALL,
-      fetch = FetchType.EAGER,
+      fetch = FetchType.LAZY,
       orphanRemoval = true)
-  private List<CryptoCoinPrice> coinPrice;
+  private CryptoCoinPrice coinPrice;
 }

@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class DataUtils {
   public static String stringListToString(List<String> list) {
-    return isNullOrEmptyList(list)
-        ? ""
-        : list.stream().map(String::valueOf).collect(Collectors.joining(","));
+    return isNullOrEmptyList(list) ? "" : list.stream().collect(Collectors.joining(","));
   }
 
   public static boolean isNullOrEmptyList(List<?> value) {
     return value == null || value.isEmpty();
+  }
+
+  public static void logList(List<?> list) {
+    list.forEach(value -> log.info(value.toString()));
   }
 }

@@ -11,15 +11,15 @@ import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketCryptoPr
 import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketInfoApiResponse;
 import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastListingApiResponse;
 import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastQuoteApiResponse;
-import stream.arepresas.cryptotracker.features.cryptos.CryptoCoin;
-import stream.arepresas.cryptotracker.features.cryptos.CryptoCoinService;
-import stream.arepresas.cryptotracker.features.cryptos.Currency;
+import stream.arepresas.cryptotracker.features.cryptos.*;
 import stream.arepresas.cryptotracker.utils.CoinMarketUtils;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 import static stream.arepresas.cryptotracker.utils.CoinMarketUtils.cryptoCoinPriceFromCoinMarketCryptoPrice;
+import static stream.arepresas.cryptotracker.utils.CoinMarketUtils.cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes;
 import static stream.arepresas.cryptotracker.utils.DataUtils.isNullOrEmptyList;
 
 @Component
@@ -29,7 +29,6 @@ public class UpdateCryptosTask implements Runnable {
 
   private final CoinMarketClient coinMarketClient;
   private final CryptoCoinService cryptoCoinService;
-  protected boolean running = false;
 
   @Value("${coinMarket.saved-cryptos.start}")
   private Integer lastPricesStart;
@@ -38,91 +37,97 @@ public class UpdateCryptosTask implements Runnable {
   private Integer lastPricesEnd;
 
   @SneakyThrows
+  @Transactional
   @Override
-  @Scheduled(fixedRate = 300000)
+  @Scheduled(fixedRate = 1000000)
   public synchronized void run() {
-    if (!running) {
-      running = true;
-      try {
-        try {
+    log.info("START --- Running UpdateCryptosTask");
+    try {
+      // Get LastPrices
+      List<CoinMarketCryptoPrice> lastPrices =
+          ((CoinMarketLastListingApiResponse)
+                  coinMarketClient.getCryptoLastPrices(
+                      lastPricesStart, lastPricesEnd, Currency.USD))
+              .getData();
 
-          // Get LastPrices
-          List<CoinMarketCryptoPrice> lastPrices =
-              ((CoinMarketLastListingApiResponse)
-                      coinMarketClient.getCryptoLastPrices(
-                          lastPricesStart, lastPricesEnd, Currency.USD))
-                  .getData();
+      List<Long> savedCryptoIds =
+          cryptoCoinService.getAllCryptoInfo().stream().map(CryptoCoin::getId).toList();
 
-          // Saved CryptoCoins
-          List<CryptoCoin> cryptoCoins =
-              cryptoCoinService.getCryptoInfo(
-                  lastPrices.stream().map(CoinMarketCryptoPrice::getId).toList());
+      List<Long> notSavedCryptoIds =
+          lastPrices.stream()
+              .filter(lastPrice -> !savedCryptoIds.contains(lastPrice.getId()))
+              .map(CoinMarketCryptoPrice::getId)
+              .toList();
 
-          List<Long> savedCryptoIds = cryptoCoins.stream().map(CryptoCoin::getId).toList();
+      List<Long> noPriceCryptoIds =
+          savedCryptoIds.stream()
+              .filter(
+                  savedCryptoId ->
+                      !lastPrices.stream()
+                          .map(CoinMarketCryptoPrice::getId)
+                          .toList()
+                          .contains(savedCryptoId))
+              .toList();
 
-          // Add notSavedCryptoCoins
-          List<Long> notSavedCryptoIds =
-              lastPrices.stream()
-                  .filter(lastPrice -> !savedCryptoIds.contains(lastPrice.getId()))
-                  .map(CoinMarketCryptoPrice::getId)
-                  .toList();
+      // Add prices for Cryptos not in LastPrices
+      lastPrices.addAll(
+          isNullOrEmptyList(noPriceCryptoIds)
+              ? new ArrayList<>()
+              : ((CoinMarketLastQuoteApiResponse)
+                      coinMarketClient.getCryptoPrices(noPriceCryptoIds, Currency.USD))
+                  .getData().values().stream().toList());
 
-          cryptoCoins.addAll(
-              isNullOrEmptyList(notSavedCryptoIds)
-                  ? new ArrayList<>()
-                  : ((CoinMarketInfoApiResponse) coinMarketClient.getCryptoInfo(notSavedCryptoIds))
-                      .getData().values().stream()
-                          .map(CoinMarketUtils::cryptoCoinFromCoinMarketCryptoInfo)
-                          .toList());
+      // CryptoCoins not in DB with price and Save
+      List<CryptoCoin> newCryptoCoins =
+          isNullOrEmptyList(notSavedCryptoIds)
+              ? new ArrayList<>()
+              : ((CoinMarketInfoApiResponse) coinMarketClient.getCryptoInfo(notSavedCryptoIds))
+                  .getData().values().stream()
+                      .map(CoinMarketUtils::cryptoCoinFromCoinMarketCryptoInfo)
+                      .map(
+                          cryptoCoin -> {
+                            cryptoCoin.setCoinPrice(
+                                cryptoCoinPriceFromCoinMarketCryptoPrice(
+                                    lastPrices.stream()
+                                        .filter(price -> price.getId().equals(cryptoCoin.getId()))
+                                        .findFirst()
+                                        .orElse(null),
+                                    cryptoCoin));
+                            return cryptoCoin;
+                          })
+                      .toList();
 
-          // Price for Cryptos not in LastPrices
-          List<Long> noPriceCryptoIds =
-              savedCryptoIds.stream()
-                  .filter(
-                      savedCryptoId ->
-                          !lastPrices.stream()
-                              .map(CoinMarketCryptoPrice::getId)
-                              .toList()
-                              .contains(savedCryptoId))
-                  .toList();
+      cryptoCoinService.saveCryptoCoins(newCryptoCoins);
 
-          List<CoinMarketCryptoPrice> coinMarketCryptoPrices =
-              isNullOrEmptyList(noPriceCryptoIds)
-                  ? new ArrayList<>()
-                  : ((CoinMarketLastQuoteApiResponse)
-                          coinMarketClient.getCryptoPrices(noPriceCryptoIds, Currency.USD))
-                      .getData().values().stream().toList();
+      // Save quotes for Cryptos in DB
+      List<CryptoCoinPrice> savedCryptoCoinPrices =
+          cryptoCoinService.getCryptoPrice(savedCryptoIds);
 
-          // Add Cryptos in LastPrices
-          coinMarketCryptoPrices.addAll(lastPrices);
+      List<CryptoCoinPriceQuote> cryptoCoinPriceQuotes = new ArrayList<>();
 
-          // Add prices to cryptos
-          cryptoCoins.stream()
-              .forEach(
-                  cryptoCoin ->
-                      cryptoCoin
-                          .getCoinPrice()
-                          .add(
-                              cryptoCoinPriceFromCoinMarketCryptoPrice(
-                                  coinMarketCryptoPrices.stream()
-                                      .filter(
-                                          coinMarketCryptoPrice ->
-                                              coinMarketCryptoPrice
-                                                  .getId()
-                                                  .equals(cryptoCoin.getId()))
-                                      .findFirst()
-                                      .orElse(null),
-                                  cryptoCoin)));
+      savedCryptoCoinPrices.stream()
+          .forEach(
+              cryptoCoinPrice ->
+                  cryptoCoinPriceQuotes.addAll(
+                      cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
+                          lastPrices.stream()
+                              .filter(
+                                  price ->
+                                      price.getId().equals(cryptoCoinPrice.getCoinInfo().getId()))
+                              .findFirst()
+                              .orElse(null)
+                              .getQuote(),
+                          cryptoCoinPrice)));
 
-          // Save data
-          cryptoCoinService.saveCryptoCoins(cryptoCoins);
-
-        } catch (Exception exception) {
-          log.error(exception.getMessage());
-        }
-      } finally {
-        running = false;
-      }
+      cryptoCoinService.saveCryptoCoinPriceQuotes(cryptoCoinPriceQuotes);
+    } catch (Exception exception) {
+      log.error(exception.getMessage());
+    } finally {
+      log.info("END --- Running UpdateCryptosTask");
     }
+
+
+
+
   }
 }
