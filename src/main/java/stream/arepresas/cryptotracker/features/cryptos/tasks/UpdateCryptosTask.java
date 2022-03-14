@@ -101,7 +101,7 @@ public class UpdateCryptosTask implements Runnable {
 
       // Save quotes for Cryptos in DB
       List<CryptoCoinPrice> savedCryptoCoinPrices =
-          cryptoCoinService.getCryptoPrice(savedCryptoIds);
+          cryptoCoinService.getCryptoPriceByCryptoIds(savedCryptoIds);
 
       List<CryptoCoinPriceQuote> cryptoCoinPriceQuotes = new ArrayList<>();
 
