@@ -1,6 +1,7 @@
 package stream.arepresas.cryptotracker.external.coinmarket;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static stream.arepresas.cryptotracker.utils.ExternalUtils.getResponse;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class CoinMarketClient {
 
@@ -36,10 +38,6 @@ public class CoinMarketClient {
 
   @Value("${coinMarket.api.url}")
   private String mainUrl;
-
-  public CoinMarketClient(RestTemplate coinMarketRestTemplate) {
-    this.coinMarketRestTemplate = coinMarketRestTemplate;
-  }
 
   public CoinMarketApiResponse getCryptoInfo(List<Long> cryptoIds) {
     String url = mainUrl.concat("/v2/cryptocurrency/info");
@@ -60,7 +58,7 @@ public class CoinMarketClient {
   }
 
   public CoinMarketApiResponse getCryptoLastPrices(
-      Integer start, Integer limit, Currency currency) {
+          Integer start, Integer limit, Currency currency) {
     String url = mainUrl.concat("/v1/cryptocurrency/listings/latest");
 
     String urlTemplate =
@@ -83,7 +81,7 @@ public class CoinMarketClient {
   }
 
   public CoinMarketApiResponse getCryptoPrices(
-      @NonNull List<Long> cryptoIds, @NonNull Currency currency) {
+          @NonNull List<Long> cryptoIds, @NonNull Currency currency) {
     String url = mainUrl.concat("/v2/cryptocurrency/quotes/latest");
 
     String urlTemplate =
