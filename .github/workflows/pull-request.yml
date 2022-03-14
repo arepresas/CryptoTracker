@@ -1,10 +1,8 @@
-name: Branch Others workflow
+name: Branch PullRequest workflow
 
 on:
-  push:
-    branches-ignore:
-      - develop
-      - master
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 jobs:
   buildAndSonar:
     name: Build-app
@@ -15,6 +13,7 @@ jobs:
         with:
           workflow: Build-app-workflow
           token: ${{ secrets.USER_GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
           display-workflow-run-url: true
           display-workflow-run-url-timeout: 10m
           display-workflow-run-url-interval: 15s
