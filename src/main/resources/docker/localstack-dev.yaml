@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   cryptotracker-db:
-    container_name: cryptotracker-db
+    container_name: crypto-tracker-db
     image: postgres:14.2-alpine3.15
     environment:
       POSTGRES_DB: cryptotracker-db
