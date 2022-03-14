@@ -17,25 +17,34 @@ public class CryptoCoinService {
   private final CryptoCoinPriceRepository cryptoCoinPriceRepository;
   private final CryptoCoinPriceQuoteRepository cryptoCoinPriceQuoteRepository;
 
+  // GET
+
   public List<CryptoCoin> getAllCryptoInfo() {
     log.info("CryptoCoinService - getAllCryptoInfo");
     return cryptoCoinRepository.findAll();
   }
 
-  public List<CryptoCoin> getCryptoInfo(List<Long> cryptoIds) {
+  public List<CryptoCoin> getCryptoInfoByCryptoIds(List<Long> cryptoIds) {
     log.info("CryptoCoinService - getCryptoInfo {}", cryptoIds);
     return cryptoCoinRepository.findAllById(cryptoIds);
   }
 
-  public List<CryptoCoinPrice> getCryptoPrice(List<Long> cryptoIds) {
+  public List<CryptoCoinPrice> getCryptoPriceByCryptoIds(List<Long> cryptoIds) {
     log.info("CryptoCoinService - getCryptoPrice {}", cryptoIds);
-    return cryptoCoinPriceRepository.findByCoinInfo_IdIsIn(cryptoIds);
+    return cryptoCoinPriceRepository.findByCoinInfoIdIsIn(cryptoIds);
+  }
+
+  public List<CryptoCoinPriceQuote> getCryptoPriceQuotesByCryptoPriceId(Long cryptoPriceId) {
+    log.info("CryptoCoinService - getCryptoPriceQuotes {}", cryptoPriceId);
+    return cryptoCoinPriceQuoteRepository.findByCoinPriceId(cryptoPriceId);
   }
 
   public CryptoCoin saveCryptoCoin(@NonNull CryptoCoin cryptoCoin) {
     log.info("CryptoCoinService - saveCryptoCoin {}", cryptoCoin);
     return cryptoCoinRepository.save(cryptoCoin);
   }
+
+  // SAVE
 
   public List<CryptoCoin> saveCryptoCoins(@NonNull List<CryptoCoin> cryptoCoins) {
     log.info(
