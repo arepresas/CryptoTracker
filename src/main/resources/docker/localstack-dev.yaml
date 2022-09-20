@@ -1,10 +1,9 @@
-version: '3.2'
-
+version: '3.7'
 services:
-
-  cryptotracker-db:
+  crypto-tracker-db:
     container_name: crypto-tracker-db
     image: postgres:14.2-alpine3.15
+    user: root
     environment:
       POSTGRES_DB: cryptotracker-db
       POSTGRES_USER: myuser
@@ -12,8 +11,27 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - cryptotracker-db_data:/var/lib/postgresql/data
-      - ./dump/:/docker-entrypoint-initdb.d/
+      - crypto-tracker-db_data:/var/lib/postgresql/data
+      - crypto-tracker-db_dump:/docker-entrypoint-initdb.d/
+    restart: on-failure
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    user: root
+    environment:
+      PGADMIN_DEFAULT_EMAIL: mail@mail.com
+      PGADMIN_DEFAULT_PASSWORD: mysecretpassword
+      PGADMIN_LISTEN_PORT: 8080
+    volumes:
+      - crypto-tracker-db_pgadmin:/var/lib/pgadmin
+    ports:
+      - '8080:8080'
+    depends_on:
+      - crypto-tracker-db
+    restart: unless-stopped
 
 volumes:
-  cryptotracker-db_data:
+  crypto-tracker-db_data:
+  crypto-tracker-db_dump:
+  crypto-tracker-db_pgadmin:
