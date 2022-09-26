@@ -29,7 +29,6 @@ jobs:
       - name: Maven Package
         run: mvn -B clean package
 
-
   sonar:
     name: Sonar-cloud
     runs-on: ubuntu-latest

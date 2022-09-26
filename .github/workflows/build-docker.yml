@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }} # dockerHub username
           password: ${{ secrets.DOCKER_PASSWORD }} # dockerHub token
@@ -37,6 +37,14 @@ jobs:
         id: project
       - name: Show extracted Maven project version
         run: echo ${{ steps.project.outputs.version }}
+
+      # Get branch name
+      - name: Set env.BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+      - name: Get branch name
+        run: echo ${BRANCH}
+
+      # Create docker image version
       - name: Build and push version
         if: github.event.inputs.version == 'true'
         id: docker_build_version
@@ -50,8 +58,10 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.project.outputs.version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+
+      # Create docker image latest
       - name: Build and push latest
-        if: github.event.inputs.version != 'true'
+        if: ${BRANCH} == 'develop'
         id: docker_build_latest
         uses: docker/build-push-action@v2
         with:
@@ -61,6 +71,23 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      # Create docker image branchName
+      - name: Build and push branch
+        if: github.event.inputs.version != 'true' && BRANCH != 'develop'
+        id: docker_build_latest
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          platforms: linux/amd64,linux/arm64
+          file: ./docker/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:${BRANCH}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Image digest
