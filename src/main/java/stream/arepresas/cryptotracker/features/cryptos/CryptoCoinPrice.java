@@ -30,15 +30,15 @@ public class CryptoCoinPrice implements Serializable {
   private Long platformId;
 
   @JsonIgnore
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "coin_info_id", referencedColumnName = "id")
   private CryptoCoin coinInfo;
 
   @JsonIgnore
   @OneToMany(
-      mappedBy = "coinPrice",
-      cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY,
-      orphanRemoval = true)
-  private List<CryptoCoinPriceQuote> coinPriceQuotes;
+          mappedBy = "coinPrice",
+          cascade = CascadeType.ALL,
+          fetch = FetchType.LAZY,
+          orphanRemoval = true)
+  private List<CryptoCoinQuote> coinPriceQuotes;
 }
