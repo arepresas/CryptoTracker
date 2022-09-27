@@ -36,9 +36,9 @@ public class CryptoCoinPrice implements Serializable {
 
   @JsonIgnore
   @OneToMany(
-      mappedBy = "coinPrice",
-      cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY,
-      orphanRemoval = true)
-  private List<CryptoCoinPriceQuote> coinPriceQuotes;
+          mappedBy = "coinPrice",
+          // cascade = CascadeType.ALL,
+          fetch = FetchType.LAZY,
+          orphanRemoval = true)
+  private List<CryptoCoinQuote> coinPriceQuotes;
 }
