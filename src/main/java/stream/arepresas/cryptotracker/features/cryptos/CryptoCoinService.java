@@ -32,28 +32,25 @@ public class CryptoCoinService {
 
   @Transactional(readOnly = true)
   public CryptoCoin getCryptoCoin(final Long cryptoCoinId) {
-    if (cryptoCoinId != null) {
-      return this.cryptoCoinRepository.getById(cryptoCoinId);
-    }
-    return null;
+    log.info("CryptoCoinService - getCryptoCoin {}", cryptoCoinId);
+    return cryptoCoinId != null ? this.cryptoCoinRepository.getById(cryptoCoinId) : null;
   }
 
   public Page<CryptoCoin> searchCryptoCoins(final CryptoCoinCriteria cryptoCoinCriteria) {
     log.info("CryptoCoinService - searchCryptos");
     logCriteria(cryptoCoinCriteria);
-
-    final var predicate = getSearchCryptoCoinPredicate(cryptoCoinCriteria);
-
-    return cryptoCoinRepository.findAll(predicate, cryptoCoinCriteria.generatePageRequest());
+    return cryptoCoinRepository.findAll(
+        getSearchCryptoCoinPredicate(cryptoCoinCriteria), cryptoCoinCriteria.generatePageRequest());
   }
 
-  private Predicate getSearchCryptoCoinPredicate(@NonNull final CryptoCoinCriteria cryptoCoinCriteria) {
+  private Predicate getSearchCryptoCoinPredicate(
+      @NonNull final CryptoCoinCriteria cryptoCoinCriteria) {
     final QCryptoCoin qCryptoCoinPrice = QCryptoCoin.cryptoCoin;
     final BooleanBuilder predicate = new BooleanBuilder();
 
     predicate.and(qCryptoCoinPrice.id.isNotNull());
 
-    if (cryptoCoinCriteria.getIds() != null && !cryptoCoinCriteria.getIds().isEmpty())
+    if (!isNullOrEmpty(cryptoCoinCriteria.getIds()))
       predicate.and(qCryptoCoinPrice.id.in(cryptoCoinCriteria.getIds()));
 
     if (!isNullOrEmpty(cryptoCoinCriteria.getSymbol()))
@@ -89,27 +86,31 @@ public class CryptoCoinService {
       predicate.and(qCryptoCoinPrice.tagGroups.in(tagGroups));
     }
 
-    if (cryptoCoinCriteria.getTokenAddress() != null)
-      predicate.and(qCryptoCoinPrice.tokenAddress.likeIgnoreCase(cryptoCoinCriteria.getTokenAddress()));
+    if (!isNullOrEmpty(cryptoCoinCriteria.getTokenAddress()))
+      predicate.and(
+          qCryptoCoinPrice.tokenAddress.likeIgnoreCase(cryptoCoinCriteria.getTokenAddress()));
 
     return predicate;
   }
 
   @Transactional(readOnly = true)
   public CryptoCoinPrice getCryptoCoinPrice(final Long cryptoCoinPriceId) {
-    return cryptoCoinPriceId != null ? this.cryptoCoinPriceRepository.getById(cryptoCoinPriceId) : null;
+    return cryptoCoinPriceId != null
+        ? this.cryptoCoinPriceRepository.getById(cryptoCoinPriceId)
+        : null;
   }
 
-  public Page<CryptoCoinPrice> searchCryptoCoinPrices(final CryptoCoinPriceCriteria cryptoCoinPriceCriteria) {
+  public Page<CryptoCoinPrice> searchCryptoCoinPrices(
+      final CryptoCoinPriceCriteria cryptoCoinPriceCriteria) {
     log.info("CryptoCoinService - searchCryptoPrices");
     logCriteria(cryptoCoinPriceCriteria);
-
-    final var predicate = getSearchCryptoCoinPricePredicate(cryptoCoinPriceCriteria);
-
-    return cryptoCoinPriceRepository.findAll(predicate, cryptoCoinPriceCriteria.generatePageRequest());
+    return cryptoCoinPriceRepository.findAll(
+        getSearchCryptoCoinPricePredicate(cryptoCoinPriceCriteria),
+        cryptoCoinPriceCriteria.generatePageRequest());
   }
 
-  private Predicate getSearchCryptoCoinPricePredicate(@NonNull CryptoCoinPriceCriteria cryptoCoinPriceCriteria) {
+  private Predicate getSearchCryptoCoinPricePredicate(
+      @NonNull CryptoCoinPriceCriteria cryptoCoinPriceCriteria) {
     final QCryptoCoinPrice qCryptoCoinPrice = QCryptoCoinPrice.cryptoCoinPrice;
     final BooleanBuilder predicate = new BooleanBuilder();
 
@@ -122,31 +123,36 @@ public class CryptoCoinService {
       predicate.and(qCryptoCoinPrice.cmcRank.eq(cryptoCoinPriceCriteria.getCmcRank()));
 
     if (cryptoCoinPriceCriteria.getNumMarketPairs() != null)
-      predicate.and(qCryptoCoinPrice.numMarketPairs.eq(cryptoCoinPriceCriteria.getNumMarketPairs()));
+      predicate.and(
+          qCryptoCoinPrice.numMarketPairs.eq(cryptoCoinPriceCriteria.getNumMarketPairs()));
 
     if (!isNullOrEmpty(cryptoCoinPriceCriteria.getCryptoCoinIds()))
       predicate.and(qCryptoCoinPrice.coinInfo.id.in(cryptoCoinPriceCriteria.getCryptoCoinIds()));
 
     if (!isNullOrEmpty(cryptoCoinPriceCriteria.getCryptoCoinSymbols()))
-      predicate.and(qCryptoCoinPrice.coinInfo.symbol.in(cryptoCoinPriceCriteria.getCryptoCoinSymbols()));
+      predicate.and(
+          qCryptoCoinPrice.coinInfo.symbol.in(cryptoCoinPriceCriteria.getCryptoCoinSymbols()));
 
     return predicate;
   }
 
   public CryptoCoinQuote getCryptoCoinQuote(Long cryptoCoinQuoteId) {
-    return cryptoCoinQuoteId != null ? this.cryptoCoinQuoteRepository.getById(cryptoCoinQuoteId) : null;
+    return cryptoCoinQuoteId != null
+        ? this.cryptoCoinQuoteRepository.getById(cryptoCoinQuoteId)
+        : null;
   }
 
-  public Page<CryptoCoinQuote> searchCryptoCoinQuotes(CryptoCoinQuoteCriteria cryptoCoinQuoteCriteria) {
+  public Page<CryptoCoinQuote> searchCryptoCoinQuotes(
+      CryptoCoinQuoteCriteria cryptoCoinQuoteCriteria) {
     log.info("CryptoCoinService - searchCryptoQuotes");
     logCriteria(cryptoCoinQuoteCriteria);
-
-    final var predicate = getSearchCryptoCoinQuotePredicate(cryptoCoinQuoteCriteria);
-
-    return cryptoCoinQuoteRepository.findAll(predicate, cryptoCoinQuoteCriteria.generatePageRequest());
+    return cryptoCoinQuoteRepository.findAll(
+        getSearchCryptoCoinQuotePredicate(cryptoCoinQuoteCriteria),
+        cryptoCoinQuoteCriteria.generatePageRequest());
   }
 
-  private Predicate getSearchCryptoCoinQuotePredicate(@NonNull CryptoCoinQuoteCriteria cryptoCoinQuoteCriteria) {
+  private Predicate getSearchCryptoCoinQuotePredicate(
+      @NonNull CryptoCoinQuoteCriteria cryptoCoinQuoteCriteria) {
     final QCryptoCoinQuote qCryptoCoinQuote = QCryptoCoinQuote.cryptoCoinQuote;
     final BooleanBuilder predicate = new BooleanBuilder();
 
@@ -156,13 +162,16 @@ public class CryptoCoinService {
       predicate.and(qCryptoCoinQuote.id.in(cryptoCoinQuoteCriteria.getIds()));
 
     if (!isNullOrEmpty(cryptoCoinQuoteCriteria.getCurrency()))
-      predicate.and(qCryptoCoinQuote.currency.stringValue().eq(cryptoCoinQuoteCriteria.getCurrency()));
+      predicate.and(
+          qCryptoCoinQuote.currency.stringValue().eq(cryptoCoinQuoteCriteria.getCurrency()));
 
     if (cryptoCoinQuoteCriteria.getLastUpdatedBefore() != null)
-      predicate.and(qCryptoCoinQuote.lastUpdated.before(cryptoCoinQuoteCriteria.getLastUpdatedBefore()));
+      predicate.and(
+          qCryptoCoinQuote.lastUpdated.before(cryptoCoinQuoteCriteria.getLastUpdatedBefore()));
 
     if (cryptoCoinQuoteCriteria.getLastUpdatedAfter() != null)
-      predicate.and(qCryptoCoinQuote.lastUpdated.after(cryptoCoinQuoteCriteria.getLastUpdatedAfter()));
+      predicate.and(
+          qCryptoCoinQuote.lastUpdated.after(cryptoCoinQuoteCriteria.getLastUpdatedAfter()));
 
     return predicate;
   }
@@ -171,9 +180,9 @@ public class CryptoCoinService {
 
   public List<CryptoCoin> saveCryptoCoins(@NonNull List<CryptoCoin> cryptoCoins) {
     log.info(
-            "CryptoCoinService - saveCryptoCoins {}",
-            stringListToString(
-                    cryptoCoins.stream().map(CryptoCoin::getId).map(String::valueOf).toList()));
+        "CryptoCoinService - saveCryptoCoins {}",
+        stringListToString(
+            cryptoCoins.stream().map(CryptoCoin::getId).map(String::valueOf).toList()));
 
     List<CryptoCoin> savedCryptoCoins = cryptoCoinRepository.saveAll(cryptoCoins);
 
@@ -181,10 +190,10 @@ public class CryptoCoinService {
       log.info("No new cryptos to save");
     } else {
       log.info(
-              "Saved {} cryptoCoins with Ids {}",
-              savedCryptoCoins.size(),
-              stringListToString(
-                      savedCryptoCoins.stream().map(cryptoCoin -> cryptoCoin.getId().toString()).toList()));
+          "Saved {} cryptoCoins with Ids {}",
+          savedCryptoCoins.size(),
+          stringListToString(
+              savedCryptoCoins.stream().map(cryptoCoin -> cryptoCoin.getId().toString()).toList()));
     }
 
     return savedCryptoCoins;
@@ -196,54 +205,54 @@ public class CryptoCoinService {
   }
 
   public List<CryptoCoinPrice> saveCryptoCoinPrices(
-          @NonNull List<CryptoCoinPrice> cryptoCoinPrices) {
+      @NonNull List<CryptoCoinPrice> cryptoCoinPrices) {
     log.info(
-            "CryptoCoinService - saveCryptoCoinPrices {}",
-            stringListToString(
-                    cryptoCoinPrices.stream().map(CryptoCoinPrice::getId).map(String::valueOf).toList()));
+        "CryptoCoinService - saveCryptoCoinPrices {}",
+        stringListToString(
+            cryptoCoinPrices.stream().map(CryptoCoinPrice::getId).map(String::valueOf).toList()));
 
     List<CryptoCoinPrice> savedCryptoCoinPrices =
-            cryptoCoinPriceRepository.saveAll(cryptoCoinPrices);
+        cryptoCoinPriceRepository.saveAll(cryptoCoinPrices);
 
     if (savedCryptoCoinPrices.isEmpty()) {
       log.info("No new cryptoCoinPrices to save");
     } else {
       log.info(
-              "Saved {} cryptoCoinPrices with Ids {}",
-              savedCryptoCoinPrices.size(),
-              stringListToString(
-                      savedCryptoCoinPrices.stream()
-                              .map(cryptoCoin -> cryptoCoin.getCoinInfo().getId().toString())
-                              .toList()));
+          "Saved {} cryptoCoinPrices with Ids {}",
+          savedCryptoCoinPrices.size(),
+          stringListToString(
+              savedCryptoCoinPrices.stream()
+                  .map(cryptoCoin -> cryptoCoin.getCoinInfo().getId().toString())
+                  .toList()));
     }
 
     return savedCryptoCoinPrices;
   }
 
   public List<CryptoCoinQuote> saveCryptoCoinPriceQuotes(
-          @NonNull List<CryptoCoinQuote> cryptoCoinQuotes) {
+      @NonNull List<CryptoCoinQuote> cryptoCoinQuotes) {
     log.info(
-            "CryptoCoinService - saveCryptoCoinPriceQuotes for cryptoCoins {}",
-            stringListToString(
-                    cryptoCoinQuotes.stream()
-                            .map(
-                                    cryptoCoinPriceQuote ->
-                                            cryptoCoinPriceQuote.getCoinPrice().getCoinInfo().getSymbol())
-                            .toList()));
+        "CryptoCoinService - saveCryptoCoinPriceQuotes for cryptoCoins {}",
+        stringListToString(
+            cryptoCoinQuotes.stream()
+                .map(
+                    cryptoCoinPriceQuote ->
+                        cryptoCoinPriceQuote.getCoinPrice().getCoinInfo().getSymbol())
+                .toList()));
 
     List<CryptoCoinQuote> savedCryptoCoinQuotes =
-            cryptoCoinQuoteRepository.saveAll(cryptoCoinQuotes);
+        cryptoCoinQuoteRepository.saveAll(cryptoCoinQuotes);
 
     if (savedCryptoCoinQuotes.isEmpty()) {
       log.info("No new cryptoCoinPriceQuotes to save");
     } else {
       log.info(
-              "Saved {} cryptoCoinPriceQuotes with Ids {}",
-              savedCryptoCoinQuotes.size(),
-              stringListToString(
-                      savedCryptoCoinQuotes.stream()
-                              .map(cryptoCoin -> cryptoCoin.getCoinPrice().getCoinInfo().getId().toString())
-                              .toList()));
+          "Saved {} cryptoCoinPriceQuotes with Ids {}",
+          savedCryptoCoinQuotes.size(),
+          stringListToString(
+              savedCryptoCoinQuotes.stream()
+                  .map(cryptoCoin -> cryptoCoin.getCoinPrice().getCoinInfo().getId().toString())
+                  .toList()));
     }
 
     return savedCryptoCoinQuotes;

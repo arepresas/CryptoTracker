@@ -7,12 +7,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CryptoCoinMapper {
 
-    CryptoCoin toEntity(CryptoCoinDto dto);
+  CryptoCoin toEntity(CryptoCoinDto dto);
 
-    List<CryptoCoin> toEntities(List<CryptoCoinDto> dtos);
+  List<CryptoCoin> toEntities(List<CryptoCoinDto> dtos);
 
-    CryptoCoinDto toDto(CryptoCoin cryptoCoin);
+  CryptoCoinDto toDto(CryptoCoin cryptoCoin);
 
-    List<CryptoCoinDto> toDtos(List<CryptoCoin> cryptoCoins);
-
+  List<CryptoCoinDto> toDtos(List<CryptoCoin> cryptoCoins);
 }

@@ -7,10 +7,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-@Getter
-@Setter
 @Entity
 @Builder
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crypto_coin")
@@ -35,7 +36,7 @@ public class CryptoCoin implements Serializable {
   @JsonIgnore
   @OneToOne(
       mappedBy = "coinInfo",
-      // cascade = CascadeType.ALL,
+      cascade = CascadeType.ALL,
       fetch = FetchType.LAZY,
       orphanRemoval = true)
   private CryptoCoinPrice coinPrice;

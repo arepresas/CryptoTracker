@@ -100,23 +100,26 @@ public class UpdateCryptosTask implements Runnable {
 
       // Save quotes for Cryptos in DB
       List<CryptoCoinPrice> savedCryptoCoinPrices =
-              cryptoCoinService.searchCryptoCoinPrices(CryptoCoinPriceCriteria.builder().ids(savedCryptoIds).build()).stream().toList();
+          cryptoCoinService
+              .searchCryptoCoinPrices(CryptoCoinPriceCriteria.builder().ids(savedCryptoIds).build())
+              .stream()
+              .toList();
 
       List<CryptoCoinQuote> cryptoCoinQuotes = new ArrayList<>();
 
       savedCryptoCoinPrices.stream()
-              .forEach(
-                      cryptoCoinPrice ->
-                              cryptoCoinQuotes.addAll(
-                                      cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
-                                              lastPrices.stream()
-                                                      .filter(
-                                                              price ->
-                                                                      price.getId().equals(cryptoCoinPrice.getCoinInfo().getId()))
-                                                      .findFirst()
-                                                      .orElse(null)
-                                                      .getQuote(),
-                                              cryptoCoinPrice)));
+          .forEach(
+              cryptoCoinPrice ->
+                  cryptoCoinQuotes.addAll(
+                      cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
+                          lastPrices.stream()
+                              .filter(
+                                  price ->
+                                      price.getId().equals(cryptoCoinPrice.getCoinInfo().getId()))
+                              .findFirst()
+                              .orElse(null)
+                              .getQuote(),
+                          cryptoCoinPrice)));
 
       cryptoCoinService.saveCryptoCoinPriceQuotes(cryptoCoinQuotes);
     } catch (Exception exception) {
@@ -124,9 +127,5 @@ public class UpdateCryptosTask implements Runnable {
     } finally {
       log.info("END --- Running UpdateCryptosTask");
     }
-
-
-
-
   }
 }

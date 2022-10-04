@@ -1,6 +1,9 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import stream.arepresas.cryptotracker.shared.criteria.PaginationCriteria;
@@ -8,21 +11,19 @@ import stream.arepresas.cryptotracker.shared.criteria.PaginationCriteria;
 import java.util.Date;
 import java.util.List;
 
-@ToString
-@Getter
-@Setter
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CryptoCoinQuoteCriteria extends PaginationCriteria {
 
-    private List<Long> ids;
-    private String currency;
-    private Date lastUpdatedBefore;
-    private Date lastUpdatedAfter;
+  private List<Long> ids;
+  private String currency;
+  private Date lastUpdatedBefore;
+  private Date lastUpdatedAfter;
 
-    public PageRequest generatePageRequest() {
-        var initSort = Sort.by(Sort.Order.asc("id"));
-        return super.generatePageRequest(initSort);
-    }
+  public PageRequest generatePageRequest() {
+    var initSort = Sort.by(Sort.Order.asc("id"));
+    return super.generatePageRequest(initSort);
+  }
 }

@@ -8,10 +8,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
 @Entity
 @Builder
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crypto_coin_price")
@@ -30,15 +31,15 @@ public class CryptoCoinPrice implements Serializable {
   private Long platformId;
 
   @JsonIgnore
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "coin_info_id", referencedColumnName = "id")
   private CryptoCoin coinInfo;
 
   @JsonIgnore
   @OneToMany(
-          mappedBy = "coinPrice",
-          // cascade = CascadeType.ALL,
-          fetch = FetchType.LAZY,
-          orphanRemoval = true)
+      mappedBy = "coinPrice",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
   private List<CryptoCoinQuote> coinPriceQuotes;
 }

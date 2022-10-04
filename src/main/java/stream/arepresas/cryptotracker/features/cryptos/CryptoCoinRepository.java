@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CryptoCoinRepository
-        extends JpaRepository<CryptoCoin, Long>, QuerydslPredicateExecutor<CryptoCoin> {
+    extends JpaRepository<CryptoCoin, Long>, QuerydslPredicateExecutor<CryptoCoin> {
 
-    @Query("select c.id from CryptoCoin c")
-    List<Long> findCryptoCoinIds();
+  @Query("select c.id from CryptoCoin c")
+  List<Long> findCryptoCoinIds();
 }

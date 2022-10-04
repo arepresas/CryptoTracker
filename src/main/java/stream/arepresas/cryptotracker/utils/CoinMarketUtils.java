@@ -39,55 +39,55 @@ public class CoinMarketUtils {
   }
 
   public static CryptoCoinPrice cryptoCoinPriceFromCoinMarketCryptoPrice(
-          @NotNull CoinMarketCryptoPrice coinMarketCryptoPrice, @NotNull CryptoCoin cryptoCoin) {
+      @NotNull CoinMarketCryptoPrice coinMarketCryptoPrice, @NotNull CryptoCoin cryptoCoin) {
     CryptoCoinPrice cryptoCoinPrice =
-            CryptoCoinPrice.builder()
-                    .cmcRank(coinMarketCryptoPrice.getCmcRank())
-                    .numMarketPairs(coinMarketCryptoPrice.getNumMarketPairs())
-                    .circulatingSupply(coinMarketCryptoPrice.getCirculatingSupply())
-                    .totalSupply(coinMarketCryptoPrice.getTotalSupply())
-                    .maxSupply(coinMarketCryptoPrice.getMaxSupply())
-                    .dateAdded(coinMarketCryptoPrice.getDateAdded())
-                    .platformId(
-                            Objects.isNull(coinMarketCryptoPrice.getPlatform())
-                                    ? null
-                                    : coinMarketCryptoPrice.getPlatform().getId())
-                    .coinPriceQuotes(new ArrayList<>())
-                    .coinInfo(cryptoCoin)
-                    .build();
+        CryptoCoinPrice.builder()
+            .cmcRank(coinMarketCryptoPrice.getCmcRank())
+            .numMarketPairs(coinMarketCryptoPrice.getNumMarketPairs())
+            .circulatingSupply(coinMarketCryptoPrice.getCirculatingSupply())
+            .totalSupply(coinMarketCryptoPrice.getTotalSupply())
+            .maxSupply(coinMarketCryptoPrice.getMaxSupply())
+            .dateAdded(coinMarketCryptoPrice.getDateAdded())
+            .platformId(
+                Objects.isNull(coinMarketCryptoPrice.getPlatform())
+                    ? null
+                    : coinMarketCryptoPrice.getPlatform().getId())
+            .coinPriceQuotes(new ArrayList<>())
+            .coinInfo(cryptoCoin)
+            .build();
 
     cryptoCoinPrice
-            .getCoinPriceQuotes()
-            .addAll(
-                    cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
-                            coinMarketCryptoPrice.getQuote(), cryptoCoinPrice));
+        .getCoinPriceQuotes()
+        .addAll(
+            cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
+                coinMarketCryptoPrice.getQuote(), cryptoCoinPrice));
 
     return cryptoCoinPrice;
   }
 
   public static List<CryptoCoinQuote> cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
-          @NotNull Map<String, CoinMarketCryptoPriceQuote> quote,
-          @NotNull CryptoCoinPrice cryptoCoinPrice) {
+      @NotNull Map<String, CoinMarketCryptoPriceQuote> quote,
+      @NotNull CryptoCoinPrice cryptoCoinPrice) {
     return quote.entrySet().stream()
-            .map(
-                    s ->
-                            CryptoCoinQuote.builder()
-                                    .currency(Currency.valueOf(s.getKey()))
-                                    .price(s.getValue().getPrice())
-                                    .volume24h(s.getValue().getVolume24H())
-                                    .volumeChange24h(s.getValue().getVolumeChange24H())
-                                    .percentChange1h(s.getValue().getPercentChange1H())
-                                    .percentChange24h(s.getValue().getPercentChange24H())
-                                    .percentChange7d(s.getValue().getPercentChange7D())
-                                    .percentChange30d(s.getValue().getPercentChange30D())
-                                    .percentChange60d(s.getValue().getPercentChange60D())
-                                    .percentChange90d(s.getValue().getPercentChange90D())
-                                    .marketCap(s.getValue().getMarketCap())
-                                    .marketCapDominance(s.getValue().getMarketCapDominance())
-                                    .fullyDilutedMarketCap(s.getValue().getFullyDilutedMarketCap())
-                                    .lastUpdated(s.getValue().getLastUpdated())
-                                    .coinPrice(cryptoCoinPrice)
-                                    .build())
+        .map(
+            s ->
+                CryptoCoinQuote.builder()
+                    .currency(Currency.valueOf(s.getKey()))
+                    .price(s.getValue().getPrice())
+                    .volume24h(s.getValue().getVolume24H())
+                    .volumeChange24h(s.getValue().getVolumeChange24H())
+                    .percentChange1h(s.getValue().getPercentChange1H())
+                    .percentChange24h(s.getValue().getPercentChange24H())
+                    .percentChange7d(s.getValue().getPercentChange7D())
+                    .percentChange30d(s.getValue().getPercentChange30D())
+                    .percentChange60d(s.getValue().getPercentChange60D())
+                    .percentChange90d(s.getValue().getPercentChange90D())
+                    .marketCap(s.getValue().getMarketCap())
+                    .marketCapDominance(s.getValue().getMarketCapDominance())
+                    .fullyDilutedMarketCap(s.getValue().getFullyDilutedMarketCap())
+                    .lastUpdated(s.getValue().getLastUpdated())
+                    .coinPrice(cryptoCoinPrice)
+                    .build())
         .toList();
   }
 }

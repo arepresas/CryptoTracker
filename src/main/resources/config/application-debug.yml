@@ -1,17 +1,20 @@
 logging:
   level:
-    root: WARN
-    org.postgresql.Driver: INFO
-    org.hibernate:
-      type:
-        descriptor:
-          sql:
-            BasicFinder: TRACE
-      SQL: DEBUG
-      stat: INFO
     liquibase: DEBUG
-    org.springframework.boot.autoconfigure: DEBUG
-    # Log restTemplate
-    org.springframework.web.client.RestTemplate: DEBUG
-    # Log Oauth2
-    org.springframework.security.oauth2.client: DEBUG
+    root: WARN
+    org:
+      postgresql.Driver: INFO
+      hibernate:
+        SQL: DEBUG
+        stat: INFO
+        type.descriptor.sql.BasicBinder: TRACE
+      springframework:
+        boot.autoconfigure: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+        # Log Oauth2
+        security.oauth2.client: DEBUG
+        # Log restTemplate
+        web.client.RestTemplate: DEBUG

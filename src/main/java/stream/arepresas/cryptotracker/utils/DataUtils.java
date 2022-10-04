@@ -26,7 +26,9 @@ public class DataUtils {
   }
 
   public static List<String> stringToList(String value) {
-    return isNullOrEmpty(value) ? new ArrayList<>() : Arrays.stream(value.trim().split(",")).toList();
+    return isNullOrEmpty(value)
+        ? new ArrayList<>()
+        : Arrays.stream(value.trim().split(",")).toList();
   }
 
   public static void logList(List<?> value) {

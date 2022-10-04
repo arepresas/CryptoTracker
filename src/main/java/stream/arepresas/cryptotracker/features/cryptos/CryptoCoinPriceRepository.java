@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CryptoCoinPriceRepository
-        extends JpaRepository<CryptoCoinPrice, Long>, QuerydslPredicateExecutor<CryptoCoinPrice> {
-}
+    extends JpaRepository<CryptoCoinPrice, Long>, QuerydslPredicateExecutor<CryptoCoinPrice> {}
