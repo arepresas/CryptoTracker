@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: build_sonar_ext
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v2.1.1
         with:
           workflow: Build-app-workflow
           token: ${{ secrets.USER_GITHUB_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
     needs: [ buildAndSonar ]
     steps:
       - name: deploy_artifact_ext
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v2.1.1
         with:
           workflow: Deploy-artifact-workflow
           token: ${{ secrets.USER_GITHUB_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
     needs: [ buildAndSonar ]
     steps:
       - name: build-docker-latest_ext
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v2.1.1
         with:
           workflow: Build-docker-workflow
           token: ${{ secrets.USER_GITHUB_TOKEN }}
