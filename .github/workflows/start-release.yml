@@ -1,0 +1,48 @@
+name: StartRelease workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      developmentVersion:
+        description: "Default version to use for new local working copy."
+        required: true
+        default: "X.Y.Z-SNAPSHOT"
+
+jobs:
+  release:
+    name: Release-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK
+        uses: actions/setup-java@v3.5.1
+        with:
+          java-version: 18
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Cache Maven packages
+        uses: actions/cache@v3.0.11
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: View settings.xml
+        run: cat /home/runner/.m2/settings.xml
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+      - name: Extract Maven project version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | cut -d "-" -f 1)
+        id: project
+      - name: Show version
+        run: |
+          echo "Release Version : ${{ steps.project.outputs.version }}"
+          echo "Development Version : ${{ github.event.inputs.developmentVersion }}"
+      - name: Publish JAR
+        run: mvn release:prepare release:perform -B -DreleaseVersion=${{ steps.project.outputs.version }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

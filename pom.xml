@@ -13,6 +13,11 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>CryptoTrackerBack</name>
     <description>Tracker for cryptocurrencies</description>
+    <scm>
+        <developerConnection>
+            scm:git:https://github.com/arepresas/CryptoTrackerBack.git
+        </developerConnection>
+    </scm>
     <properties>
         <java.version>18</java.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
