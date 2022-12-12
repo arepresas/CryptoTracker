@@ -14,7 +14,7 @@ import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastQuot
 import stream.arepresas.cryptotracker.features.cryptos.*;
 import stream.arepresas.cryptotracker.utils.CoinMarketUtils;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 

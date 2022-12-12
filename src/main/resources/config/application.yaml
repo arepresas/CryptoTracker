@@ -29,7 +29,7 @@ spring:
         provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
       ddl-auto: none
       naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
       show-sql: true
   liquibase:
