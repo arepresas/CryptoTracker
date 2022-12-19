@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import stream.arepresas.cryptotracker.features.cryptos.CryptoApiEndpoints;
 
-import java.util.Date;
+import static java.time.Instant.now;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,6 +24,6 @@ public class CryptoTaskController {
   @GetMapping(value = CryptoApiEndpoints.CRYPTO_TASK_LAST_PRICES)
   @ResponseStatus(HttpStatus.OK)
   public void cryptoInfoAndPriceUpdateTask() {
-    taskScheduler.schedule(updateCryptosTask, new Date());
+    taskScheduler.schedule(updateCryptosTask, now());
   }
 }

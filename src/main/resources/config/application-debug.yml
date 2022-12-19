@@ -1,7 +1,7 @@
 logging:
   level:
     liquibase: DEBUG
-    root: WARN
+    root: INFO
     org:
       postgresql.Driver: INFO
       hibernate:
@@ -18,3 +18,7 @@ logging:
         security.oauth2.client: DEBUG
         # Log restTemplate
         web.client.RestTemplate: DEBUG
+    stream:
+      arepresas:
+        cryptotracker:
+          features: DEBUG

@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static stream.arepresas.cryptotracker.utils.ExternalUtils.getResponse;
+import static stream.arepresas.cryptotracker.utils.ApiUtils.getResponse;
+import static stream.arepresas.cryptotracker.utils.ApiUtils.logQuery;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,8 @@ public class CoinMarketClient {
   private String mainUrl;
 
   public CoinMarketApiResponse getCryptoInfo(List<Long> cryptoIds) {
+    log.info("CoinMarketClient - getCryptoInfo");
+
     String url = mainUrl.concat("/v2/cryptocurrency/info");
 
     String urlTemplate =
@@ -47,6 +50,8 @@ public class CoinMarketClient {
 
     Map<String, ?> params =
         Map.of(ID, cryptoIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
+
+    logQuery(urlTemplate, params);
 
     return getResponse(
         coinMarketRestTemplate.exchange(
@@ -58,7 +63,9 @@ public class CoinMarketClient {
   }
 
   public CoinMarketApiResponse getCryptoLastPrices(
-          Integer start, Integer limit, Currency currency) {
+      Integer start, Integer limit, Currency currency) {
+    log.info("CoinMarketClient - getCryptoLastPrices");
+
     String url = mainUrl.concat("/v1/cryptocurrency/listings/latest");
 
     String urlTemplate =
@@ -71,6 +78,8 @@ public class CoinMarketClient {
 
     Map<String, ?> params = Map.of(START, start, LIMIT, limit, CONVERT, currency);
 
+    logQuery(urlTemplate, params);
+
     return getResponse(
         coinMarketRestTemplate.exchange(
             urlTemplate,
@@ -81,7 +90,9 @@ public class CoinMarketClient {
   }
 
   public CoinMarketApiResponse getCryptoPrices(
-          @NonNull List<Long> cryptoIds, @NonNull Currency currency) {
+      @NonNull List<Long> cryptoIds, @NonNull Currency currency) {
+    log.info("CoinMarketClient - getCryptoLastPrices");
+
     String url = mainUrl.concat("/v2/cryptocurrency/quotes/latest");
 
     String urlTemplate =
@@ -97,6 +108,8 @@ public class CoinMarketClient {
             cryptoIds.stream().map(String::valueOf).collect(Collectors.joining(",")),
             CONVERT,
             currency);
+
+    logQuery(urlTemplate, params);
 
     return getResponse(
         coinMarketRestTemplate.exchange(

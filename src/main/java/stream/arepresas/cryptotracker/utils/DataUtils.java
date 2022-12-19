@@ -21,8 +21,10 @@ public class DataUtils {
     return value == null || value.isEmpty();
   }
 
-  public static String stringListToString(List<String> value) {
-    return isNullOrEmpty(value) ? "" : value.stream().collect(Collectors.joining(","));
+  public static String listToString(List<?> value) {
+    return isNullOrEmpty(value)
+        ? ""
+        : value.stream().map(Object::toString).collect(Collectors.joining(","));
   }
 
   public static List<String> stringToList(String value) {
