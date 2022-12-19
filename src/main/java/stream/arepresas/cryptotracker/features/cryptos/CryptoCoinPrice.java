@@ -1,9 +1,9 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CryptoCoinPrice implements Serializable {
   private Long platformId;
 
   @JsonIgnore
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "coin_info_id", referencedColumnName = "id")
   private CryptoCoin coinInfo;
 

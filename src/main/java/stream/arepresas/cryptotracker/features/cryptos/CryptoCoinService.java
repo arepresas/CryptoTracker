@@ -33,7 +33,7 @@ public class CryptoCoinService {
   @Transactional(readOnly = true)
   public CryptoCoin getCryptoCoin(final Long cryptoCoinId) {
     log.info("CryptoCoinService - getCryptoCoin {}", cryptoCoinId);
-    return cryptoCoinId != null ? this.cryptoCoinRepository.getById(cryptoCoinId) : null;
+    return cryptoCoinId != null ? this.cryptoCoinRepository.getReferenceById(cryptoCoinId) : null;
   }
 
   public Page<CryptoCoin> searchCryptoCoins(final CryptoCoinCriteria cryptoCoinCriteria) {
@@ -96,7 +96,7 @@ public class CryptoCoinService {
   @Transactional(readOnly = true)
   public CryptoCoinPrice getCryptoCoinPrice(final Long cryptoCoinPriceId) {
     return cryptoCoinPriceId != null
-        ? this.cryptoCoinPriceRepository.getById(cryptoCoinPriceId)
+        ? this.cryptoCoinPriceRepository.getReferenceById(cryptoCoinPriceId)
         : null;
   }
 
@@ -138,7 +138,7 @@ public class CryptoCoinService {
 
   public CryptoCoinQuote getCryptoCoinQuote(Long cryptoCoinQuoteId) {
     return cryptoCoinQuoteId != null
-        ? this.cryptoCoinQuoteRepository.getById(cryptoCoinQuoteId)
+        ? this.cryptoCoinQuoteRepository.getReferenceById(cryptoCoinQuoteId)
         : null;
   }
 
@@ -181,8 +181,7 @@ public class CryptoCoinService {
   public List<CryptoCoin> saveCryptoCoins(@NonNull List<CryptoCoin> cryptoCoins) {
     log.info(
         "CryptoCoinService - saveCryptoCoins {}",
-        stringListToString(
-            cryptoCoins.stream().map(CryptoCoin::getId).map(String::valueOf).toList()));
+        listToString(cryptoCoins.stream().map(CryptoCoin::getId).toList()));
 
     List<CryptoCoin> savedCryptoCoins = cryptoCoinRepository.saveAll(cryptoCoins);
 
@@ -192,8 +191,7 @@ public class CryptoCoinService {
       log.info(
           "Saved {} cryptoCoins with Ids {}",
           savedCryptoCoins.size(),
-          stringListToString(
-              savedCryptoCoins.stream().map(cryptoCoin -> cryptoCoin.getId().toString()).toList()));
+          listToString(savedCryptoCoins.stream().map(cryptoCoin -> cryptoCoin.getId()).toList()));
     }
 
     return savedCryptoCoins;
@@ -208,8 +206,7 @@ public class CryptoCoinService {
       @NonNull List<CryptoCoinPrice> cryptoCoinPrices) {
     log.info(
         "CryptoCoinService - saveCryptoCoinPrices {}",
-        stringListToString(
-            cryptoCoinPrices.stream().map(CryptoCoinPrice::getId).map(String::valueOf).toList()));
+        listToString(cryptoCoinPrices.stream().map(CryptoCoinPrice::getId).toList()));
 
     List<CryptoCoinPrice> savedCryptoCoinPrices =
         cryptoCoinPriceRepository.saveAll(cryptoCoinPrices);
@@ -220,9 +217,9 @@ public class CryptoCoinService {
       log.info(
           "Saved {} cryptoCoinPrices with Ids {}",
           savedCryptoCoinPrices.size(),
-          stringListToString(
+          listToString(
               savedCryptoCoinPrices.stream()
-                  .map(cryptoCoin -> cryptoCoin.getCoinInfo().getId().toString())
+                  .map(cryptoCoin -> cryptoCoin.getCoinInfo().getId())
                   .toList()));
     }
 
@@ -233,7 +230,7 @@ public class CryptoCoinService {
       @NonNull List<CryptoCoinQuote> cryptoCoinQuotes) {
     log.info(
         "CryptoCoinService - saveCryptoCoinPriceQuotes for cryptoCoins {}",
-        stringListToString(
+        listToString(
             cryptoCoinQuotes.stream()
                 .map(
                     cryptoCoinPriceQuote ->
@@ -249,10 +246,9 @@ public class CryptoCoinService {
       log.info(
           "Saved {} cryptoCoinPriceQuotes with Ids {}",
           savedCryptoCoinQuotes.size(),
-          stringListToString(
-              savedCryptoCoinQuotes.stream()
-                  .map(cryptoCoin -> cryptoCoin.getCoinPrice().getCoinInfo().getId().toString())
-                  .toList()));
+          savedCryptoCoinQuotes.stream()
+              .map(cryptoCoin -> cryptoCoin.getCoinPrice().getCoinInfo().getId())
+              .toList());
     }
 
     return savedCryptoCoinQuotes;

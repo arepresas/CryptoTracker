@@ -12,8 +12,8 @@ import stream.arepresas.cryptotracker.features.cryptos.Currency;
 
 import java.util.List;
 
-import static stream.arepresas.cryptotracker.utils.ExternalUtils.MAX_AGE_60;
-import static stream.arepresas.cryptotracker.utils.ExternalUtils.X_CACHE_CONTROL;
+import static stream.arepresas.cryptotracker.utils.ApiUtils.MAX_AGE_60;
+import static stream.arepresas.cryptotracker.utils.ApiUtils.X_CACHE_CONTROL;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +21,6 @@ import static stream.arepresas.cryptotracker.utils.ExternalUtils.X_CACHE_CONTROL
 @RequestMapping(value = CryptoApiEndpoints.COIN_MARKET_CRYPTO_BASE_URL)
 public class CoinMarketController {
   private final CoinMarketClient coinMarketClient;
-
 
   @Operation(description = "Get crypto(s) info")
   @GetMapping(value = CryptoApiEndpoints.COIN_MARKET_CRYPTO_INFO)
@@ -36,7 +35,7 @@ public class CoinMarketController {
   @GetMapping(value = CryptoApiEndpoints.COIN_MARKET_CRYPTO_LAST_LISTINGS)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<CoinMarketApiResponse> getCryptoLastListing(
-          Integer start, Integer limit, Currency currency) {
+      Integer start, Integer limit, Currency currency) {
     return ResponseEntity.status(HttpStatus.OK)
         .header(X_CACHE_CONTROL, MAX_AGE_60)
         .body(coinMarketClient.getCryptoLastPrices(start, limit, currency));
@@ -46,7 +45,7 @@ public class CoinMarketController {
   @GetMapping(value = CryptoApiEndpoints.COIN_MARKET_CRYPTO_QUOTE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<CoinMarketApiResponse> getCryptoQuote(
-          @PathVariable List<Long> cryptoIds, @PathVariable Currency currency) {
+      @PathVariable List<Long> cryptoIds, @PathVariable Currency currency) {
     return ResponseEntity.status(HttpStatus.OK)
         .header(X_CACHE_CONTROL, MAX_AGE_60)
         .body(coinMarketClient.getCryptoPrices(cryptoIds, currency));

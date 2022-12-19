@@ -1,5 +1,6 @@
 package stream.arepresas.cryptotracker.features.cryptos.tasks;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import stream.arepresas.cryptotracker.external.coinmarket.dto.CoinMarketLastQuot
 import stream.arepresas.cryptotracker.features.cryptos.*;
 import stream.arepresas.cryptotracker.utils.CoinMarketUtils;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,11 +52,15 @@ public class UpdateCryptosTask implements Runnable {
 
       List<Long> savedCryptoIds = cryptoCoinService.getCryptoCoinIds();
 
+      log.debug("SavedCryptoIds: {}", savedCryptoIds);
+
       List<Long> notSavedCryptoIds =
           lastPrices.stream()
               .filter(lastPrice -> !savedCryptoIds.contains(lastPrice.getId()))
               .map(CoinMarketCryptoPrice::getId)
               .toList();
+
+      log.debug("NotSavedCryptoIds: {}", notSavedCryptoIds);
 
       List<Long> noPriceCryptoIds =
           savedCryptoIds.stream()
@@ -67,6 +71,8 @@ public class UpdateCryptosTask implements Runnable {
                           .toList()
                           .contains(savedCryptoId))
               .toList();
+
+      log.debug("NoPriceCryptoIds: {}", noPriceCryptoIds);
 
       // Add prices for Cryptos not in LastPrices
       lastPrices.addAll(
@@ -96,31 +102,45 @@ public class UpdateCryptosTask implements Runnable {
                           })
                       .toList();
 
+      log.debug("NewCryptoCoins: {}", newCryptoCoins.stream().map(CryptoCoin::getSymbol).toList());
+
       cryptoCoinService.saveCryptoCoins(newCryptoCoins);
 
       // Save quotes for Cryptos in DB
       List<CryptoCoinPrice> savedCryptoCoinPrices =
           cryptoCoinService
-              .searchCryptoCoinPrices(CryptoCoinPriceCriteria.builder().ids(savedCryptoIds).build())
+              .searchCryptoCoinPrices(
+                  CryptoCoinPriceCriteria.builder().cryptoCoinIds(savedCryptoIds).build())
               .stream()
               .toList();
+
+      // Delete new crypto coins from lastprices
+      var lastPricesOldCryptos =
+              lastPrices.stream()
+                      .filter(
+                              lastPrice ->
+                                      newCryptoCoins.stream()
+                                              .noneMatch(cryptoCoin -> cryptoCoin.getId().equals(lastPrice.getId())))
+                      .toList();
+
+      log.debug("lastPricesOldCryptos: {}", lastPricesOldCryptos);
 
       List<CryptoCoinQuote> cryptoCoinQuotes = new ArrayList<>();
 
       savedCryptoCoinPrices.stream()
           .forEach(
-              cryptoCoinPrice ->
+              cryptoCoinPrice -> {
+                CoinMarketCryptoPrice coinMarketCryptoPrice =
+                    lastPricesOldCryptos.stream()
+                        .filter(
+                            price -> price.getId().equals(cryptoCoinPrice.getCoinInfo().getId()))
+                        .findFirst()
+                        .orElse(null);
+                if (coinMarketCryptoPrice != null)
                   cryptoCoinQuotes.addAll(
                       cryptoCoinPriceQuotesFromCoinMarketCryptoPriceQuotes(
-                          lastPrices.stream()
-                              .filter(
-                                  price ->
-                                      price.getId().equals(cryptoCoinPrice.getCoinInfo().getId()))
-                              .findFirst()
-                              .orElse(null)
-                              .getQuote(),
-                          cryptoCoinPrice)));
-
+                          coinMarketCryptoPrice.getQuote(), cryptoCoinPrice));
+              });
       cryptoCoinService.saveCryptoCoinPriceQuotes(cryptoCoinQuotes);
     } catch (Exception exception) {
       log.error(exception.getMessage());

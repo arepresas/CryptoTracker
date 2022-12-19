@@ -1,10 +1,10 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.Date;
 

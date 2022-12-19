@@ -3,7 +3,7 @@ server:
 
 logging:
   level:
-    root: info
+    root: INFO
     org:
       springframework: INFO
       postgresql.Driver: INFO
