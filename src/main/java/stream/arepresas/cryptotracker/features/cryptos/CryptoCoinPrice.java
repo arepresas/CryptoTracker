@@ -10,11 +10,11 @@ import java.util.List;
 
 @Entity
 @Builder
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "coinPriceQuotes")
+@EqualsAndHashCode(exclude = "coinPriceQuotes")
 @Table(name = "crypto_coin_price")
 public class CryptoCoinPrice implements Serializable {
   @Id

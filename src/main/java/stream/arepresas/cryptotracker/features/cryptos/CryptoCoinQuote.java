@@ -8,11 +8,9 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Builder
-@Getter
-@Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crypto_coin_quote")

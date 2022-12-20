@@ -21,6 +21,7 @@ public class CryptoCoinQuoteCriteria extends PaginationCriteria {
   private String currency;
   private Date lastUpdatedBefore;
   private Date lastUpdatedAfter;
+  private List<Long> cryptoPriceIds;
 
   public PageRequest generatePageRequest() {
     var initSort = Sort.by(Sort.Order.asc("id"));
