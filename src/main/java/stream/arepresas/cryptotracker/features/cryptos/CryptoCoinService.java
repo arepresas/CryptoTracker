@@ -95,6 +95,7 @@ public class CryptoCoinService {
 
   @Transactional(readOnly = true)
   public CryptoCoinPrice getCryptoCoinPrice(final Long cryptoCoinPriceId) {
+    log.info("CryptoCoinService - getCryptoCoinPrice {}", cryptoCoinPriceId);
     return cryptoCoinPriceId != null
         ? this.cryptoCoinPriceRepository.getReferenceById(cryptoCoinPriceId)
         : null;
@@ -137,6 +138,7 @@ public class CryptoCoinService {
   }
 
   public CryptoCoinQuote getCryptoCoinQuote(Long cryptoCoinQuoteId) {
+    log.info("CryptoCoinService - getCryptoCoinQuote {}", cryptoCoinQuoteId);
     return cryptoCoinQuoteId != null
         ? this.cryptoCoinQuoteRepository.getReferenceById(cryptoCoinQuoteId)
         : null;
@@ -164,6 +166,9 @@ public class CryptoCoinService {
     if (!isNullOrEmpty(cryptoCoinQuoteCriteria.getCurrency()))
       predicate.and(
           qCryptoCoinQuote.currency.stringValue().eq(cryptoCoinQuoteCriteria.getCurrency()));
+
+    if (!isNullOrEmpty(cryptoCoinQuoteCriteria.getCryptoPriceIds()))
+      predicate.and(qCryptoCoinQuote.coinPrice.id.in(cryptoCoinQuoteCriteria.getCryptoPriceIds()));
 
     if (cryptoCoinQuoteCriteria.getLastUpdatedBefore() != null)
       predicate.and(
@@ -230,12 +235,11 @@ public class CryptoCoinService {
       @NonNull List<CryptoCoinQuote> cryptoCoinQuotes) {
     log.info(
         "CryptoCoinService - saveCryptoCoinPriceQuotes for cryptoCoins {}",
-        listToString(
-            cryptoCoinQuotes.stream()
-                .map(
-                    cryptoCoinPriceQuote ->
-                        cryptoCoinPriceQuote.getCoinPrice().getCoinInfo().getSymbol())
-                .toList()));
+        cryptoCoinQuotes.stream()
+            .map(
+                cryptoCoinPriceQuote ->
+                    cryptoCoinPriceQuote.getCoinPrice().getCoinInfo().getSymbol())
+            .toList());
 
     List<CryptoCoinQuote> savedCryptoCoinQuotes =
         cryptoCoinQuoteRepository.saveAll(cryptoCoinQuotes);

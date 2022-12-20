@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.Date;
 import java.util.List;
@@ -25,11 +26,16 @@ public class CryptoCoinPriceDto {
   private Double maxSupply;
   private Date dateAdded;
   private Long platformId;
-  private List<CryptoCoinQuoteDto> coinPriceQuotes;
 
   public EntityModel<CryptoCoinPriceDto> toModel() {
     final EntityModel<CryptoCoinPriceDto> resource = EntityModel.of(this);
     resource.add(linkTo(methodOn(CryptoController.class).getCrypto(this.id)).withSelfRel());
+    resource.add(
+        WebMvcLinkBuilder.linkTo(
+                methodOn(CryptoController.class)
+                    .getCryptoQuotes(
+                        CryptoCoinQuoteCriteria.builder().cryptoPriceIds(List.of(this.id)).build()))
+            .withRel("coinPriceQuotes"));
     return resource;
   }
 }

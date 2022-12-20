@@ -1,12 +1,14 @@
 package stream.arepresas.cryptotracker.features.cryptos;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -29,11 +31,16 @@ public class CryptoCoinDto {
   private String tagNames; // TagNames comma separated
   private String tagGroups; // TagGroups comma separated
   private String tokenAddress;
-  private CryptoCoinPriceDto coinPrice;
 
   public EntityModel<CryptoCoinDto> toModel() {
     final EntityModel<CryptoCoinDto> resource = EntityModel.of(this);
     resource.add(linkTo(methodOn(CryptoController.class).getCrypto(this.id)).withSelfRel());
+    resource.add(
+        WebMvcLinkBuilder.linkTo(
+                methodOn(CryptoController.class)
+                    .getCryptoPrices(
+                        CryptoCoinPriceCriteria.builder().cryptoCoinIds(List.of(this.id)).build()))
+            .withRel("coinPrice"));
     return resource;
   }
 }
