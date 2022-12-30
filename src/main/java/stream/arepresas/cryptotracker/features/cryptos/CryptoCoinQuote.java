@@ -3,10 +3,13 @@ package stream.arepresas.cryptotracker.features.cryptos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -33,7 +36,7 @@ public class CryptoCoinQuote implements Serializable {
   @NotNull private Double marketCap;
   @NotNull private Double marketCapDominance;
   @NotNull private Double fullyDilutedMarketCap;
-  @NotNull private Date lastUpdated;
+  @NotNull private Timestamp lastUpdated;
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)

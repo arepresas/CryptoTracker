@@ -5,6 +5,7 @@
 This repository is **the api source code** for in store price checking
 
 It's writen as a website, involving
+
 - an **API** : Java, Spring Boot REST API
 - a **database** : Postgres
 
@@ -13,6 +14,7 @@ and, yeah, it's [MonolithFirst](https://www.martinfowler.com/bliki/MonolithFirst
 ## Running the application locally
 
 **Requirements**:
+
 - docker (for install postgres)
 - postgres 18
 - java 18
@@ -38,14 +40,23 @@ and, yeah, it's [MonolithFirst](https://www.martinfowler.com/bliki/MonolithFirst
 
 #### - Delete all data
 
-- Launch : **docker stop crypto-tracker-db pgadmin && docker rm crypto-tracker-db pgadmin && docker volume rm crypto-tracker-db_data crypto-tracker-db_dump crypto-tracker-db_pgadmin**
+- Launch : **docker stop crypto-tracker-db pgadmin && docker rm crypto-tracker-db pgadmin && docker volume rm
+  crypto-tracker-db_data crypto-tracker-db_dump crypto-tracker-db_pgadmin**
 
 - You can do **docker stop crypto-tracker-db pgadmin && docker system prune -a** to delete all data and docker images
 
 ### Run project
 
+**IntelliJ Ultimate**
+
+Create New SpringBoot application configuration
 For local development with local DB use spring profiles : local, debug
-And sets VM options : **-DcoinMarket.api.key="YOUR_COINMARKET_API_KEY"**
+And set VM options : **-DcoinMarket.api.key="YOUR_COINMARKET_API_KEY"**
+
+**IntelliJ Community**
+
+Create New java application configuration
+Set VM options : **-DcoinMarket.api.key="YOUR_COINMARKET_API_KEY" -Dspring.profiles.active=local,debug**
 
 # Contribute
 
@@ -53,13 +64,15 @@ Use Intellij IDE.
 
 Is it recommended to install Lombok Plugin.
 
-We will use Architecture Decision Records, as [described by Michael Nygard](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions).
+We will use Architecture Decision Records,
+as [described by Michael Nygard](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions).
 
 ## Files and Directories
 
 The project (a.k.a. project directory) has a particular directory structure. A representative project is shown below:
 
-"[Package by feature](https://lkrnac.net/blog/2018/02/package-by-layer-obsolete/)" ("Folder by feature" in non Java world)
+"[Package by feature](https://lkrnac.net/blog/2018/02/package-by-layer-obsolete/)" ("Folder by feature" in non Java
+world)
 
 This approach on the other hand groups together files belonging to certain feature within the system
 
@@ -71,6 +84,7 @@ For convenience, you can use the maven command to generate new liquibase migrati
 ```
 mvn liquibase:diff
 ```
+
 ### Swagger
 
 You can access to swagger-ui with the following uri : http://localhost:8700/swagger-ui/index.html
@@ -82,6 +96,7 @@ You can access to swagger-ui with the following uri : http://localhost:8700/swag
 To monitor and manage your application
 
 ### Reference Documentation
+
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
@@ -95,6 +110,7 @@ For further reference, please consider the following sections:
 * [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/2.2.2.RELEASE/reference/htmlsingle/#using-boot-devtools)
 
 ### Guides
+
 The following guides illustrate how to use some features concretely:
 
 * [Securing a Web Application](https://spring.io/guides/gs/securing-web/)

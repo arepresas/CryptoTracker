@@ -3,7 +3,7 @@ package stream.arepresas.cryptotracker.external.coinmarket.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 public class CoinMarketCryptoPriceQuote {
@@ -43,5 +43,5 @@ public class CoinMarketCryptoPriceQuote {
   private Double fullyDilutedMarketCap;
 
   @JsonProperty("last_updated")
-  private Date lastUpdated;
+  private Timestamp lastUpdated;
 }

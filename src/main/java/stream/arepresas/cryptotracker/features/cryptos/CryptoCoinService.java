@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stream.arepresas.cryptotracker.utils.DataUtils;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import static stream.arepresas.cryptotracker.utils.DataUtils.*;
@@ -172,11 +173,13 @@ public class CryptoCoinService {
 
     if (cryptoCoinQuoteCriteria.getLastUpdatedBefore() != null)
       predicate.and(
-          qCryptoCoinQuote.lastUpdated.before(cryptoCoinQuoteCriteria.getLastUpdatedBefore()));
+          qCryptoCoinQuote.lastUpdated.before(
+              Timestamp.from(cryptoCoinQuoteCriteria.getLastUpdatedBefore().toInstant())));
 
     if (cryptoCoinQuoteCriteria.getLastUpdatedAfter() != null)
       predicate.and(
-          qCryptoCoinQuote.lastUpdated.after(cryptoCoinQuoteCriteria.getLastUpdatedAfter()));
+          qCryptoCoinQuote.lastUpdated.after(
+              Timestamp.from(cryptoCoinQuoteCriteria.getLastUpdatedAfter().toInstant())));
 
     return predicate;
   }

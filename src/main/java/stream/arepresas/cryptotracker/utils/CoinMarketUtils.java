@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static stream.arepresas.cryptotracker.utils.DataUtils.listToString;
-
 @UtilityClass
 public class CoinMarketUtils {
   public static CryptoCoin cryptoCoinFromCoinMarketCryptoInfo(
@@ -31,9 +29,9 @@ public class CoinMarketUtils {
         .slug(coinMarketCryptoInfo.getSlug())
         .logo(coinMarketCryptoInfo.getLogo())
         .subreddit(coinMarketCryptoInfo.getSubreddit())
-        .tags(listToString(coinMarketCryptoInfo.getTags()))
-        .tagNames(listToString(coinMarketCryptoInfo.getTagNames()))
-        .tagGroups(listToString(coinMarketCryptoInfo.getTagGroups()))
+        .tags(DataUtils.listToString(coinMarketCryptoInfo.getTags()))
+        .tagNames(DataUtils.listToString(coinMarketCryptoInfo.getTagNames()))
+        .tagGroups(DataUtils.listToString(coinMarketCryptoInfo.getTagGroups()))
         .coinPrice(null)
         .build();
   }
